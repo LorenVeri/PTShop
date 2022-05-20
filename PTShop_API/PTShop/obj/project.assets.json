@@ -3175,11 +3175,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\asus\\Desktop\\PTShop_GitRespon\\PTShop\\PTShop_API\\PTShop\\PTShop.csproj",
+      "projectUniqueName": "C:\\Users\\asus\\Desktop\\PTShop_API\\PTShop\\PTShop.csproj",
       "projectName": "PTShop",
-      "projectPath": "C:\\Users\\asus\\Desktop\\PTShop_GitRespon\\PTShop\\PTShop_API\\PTShop\\PTShop.csproj",
+      "projectPath": "C:\\Users\\asus\\Desktop\\PTShop_API\\PTShop\\PTShop.csproj",
       "packagesPath": "C:\\Users\\asus\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\asus\\Desktop\\PTShop_GitRespon\\PTShop\\PTShop_API\\PTShop\\obj\\",
+      "outputPath": "C:\\Users\\asus\\Desktop\\PTShop_API\\PTShop\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\asus\\AppData\\Roaming\\NuGet\\NuGet.Config",
