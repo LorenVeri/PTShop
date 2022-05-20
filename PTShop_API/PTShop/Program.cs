@@ -6,6 +6,8 @@ using PTShop.GrapQL.Product_Media;
 using PTShop.GrapQL.Product_Price;
 using PTShop.Models;
 using Newtonsoft.Json.Serialization;
+using PTShop.GraphQL.Contact;
+using PTShop.GraphQL.Banner;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,15 +16,17 @@ builder.Services.AddRazorPages();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddPooledDbContextFactory<DatabaseContext>(o => o.UseSqlServer(connectionString));
 //Scaffold-DbContext "Server=DESKTOP-AMJ7HPS;Database=PTSHOP;Trusted_Connection=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Context DatabaseContext -force
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+var AllowAll = "_AllowAll";
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: MyAllowSpecificOrigins,
+    options.AddPolicy(
+            name: AllowAll,
             policy =>
             {
-                policy.WithOrigins("http://example.com",
-                                "http://www.contoso.com");
+                policy.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
             });
 });
 
@@ -42,6 +46,8 @@ builder.Services
             .AddTypeExtension<QueryProduct>()
             .AddTypeExtension<QueryProductPrice>()
             .AddTypeExtension<QueryProductMedia>()
+            .AddTypeExtension<QueryContact>()
+            .AddTypeExtension<QueryBanner>()
         .AddMutationType(x => x.Name("Mutation"))
             .AddTypeExtension<MutationCategory>()
             .AddTypeExtension<MutationCountry>()
@@ -63,8 +69,8 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseCors(AllowAll);
 app.UseDeveloperExceptionPage();
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -75,7 +81,6 @@ app.UseAuthorization();
 app.MapRazorPages();
 
 //app.MapGraphQL("/graphql");
-app.UseCors(MyAllowSpecificOrigins);
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
