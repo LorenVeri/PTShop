@@ -642,6 +642,18 @@
           "lib/netstandard2.0/Newtonsoft.Json.Bson.dll": {}
         }
       },
+      "Rick.Docs.Samples.RouteInfo/1.0.0.3": {
+        "type": "package",
+        "compile": {
+          "lib/netcoreapp3.1/Microsoft.Docs.Samples.RouteInfo.dll": {}
+        },
+        "runtime": {
+          "lib/netcoreapp3.1/Microsoft.Docs.Samples.RouteInfo.dll": {}
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
+      },
       "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
         "type": "package",
         "runtimeTargets": {
@@ -3074,6 +3086,18 @@
         "lib/netstandard2.0/Newtonsoft.Json.Bson.xml",
         "newtonsoft.json.bson.1.0.2.nupkg.sha512",
         "newtonsoft.json.bson.nuspec"
+      ]
+    },
+    "Rick.Docs.Samples.RouteInfo/1.0.0.3": {
+      "sha512": "OVRUnI7TVWLGxQAOJy1HklGojkP21x7VH/9uHo8wl7d1dkRBZ0XRY4XSmb7JL5yZP7QyzxSuG++2bc3s1ghF4A==",
+      "type": "package",
+      "path": "rick.docs.samples.routeinfo/1.0.0.3",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netcoreapp3.1/Microsoft.Docs.Samples.RouteInfo.dll",
+        "rick.docs.samples.routeinfo.1.0.0.3.nupkg.sha512",
+        "rick.docs.samples.routeinfo.nuspec"
       ]
     },
     "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
@@ -6535,7 +6559,8 @@
       "Microsoft.AspNet.WebApi.Client >= 5.2.8",
       "Microsoft.AspNetCore.Mvc.NewtonsoftJson >= 5.0.17",
       "Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation >= 5.0.14",
-      "Microsoft.VisualStudio.Web.CodeGeneration.Design >= 5.0.2"
+      "Microsoft.VisualStudio.Web.CodeGeneration.Design >= 5.0.2",
+      "Rick.Docs.Samples.RouteInfo >= 1.0.0.3"
     ]
   },
   "packageFolders": {
@@ -6592,6 +6617,10 @@
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
             "target": "Package",
             "version": "[5.0.2, )"
+          },
+          "Rick.Docs.Samples.RouteInfo": {
+            "target": "Package",
+            "version": "[1.0.0.3, )"
           }
         },
         "imports": [

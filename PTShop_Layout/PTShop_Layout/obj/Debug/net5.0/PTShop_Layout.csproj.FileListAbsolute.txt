@@ -756,3 +756,4 @@ C:\Users\asus\Desktop\PTShop_GitRespon\PTShop\PTShop_Layout\PTShop_Layout\bin\De
 C:\Users\asus\Desktop\PTShop_GitRespon\PTShop\PTShop_Layout\PTShop_Layout\bin\Debug\net5.0\runtimes\win-arm64\lib\net5.0\dotnet-aspnet-codegenerator-design.exe
 C:\Users\asus\Desktop\PTShop_GitRespon\PTShop\PTShop_Layout\PTShop_Layout\obj\Debug\net5.0\Razor\Views\ShopCart\Index.cshtml.g.cs
 C:\Users\asus\Desktop\PTShop_GitRespon\PTShop\PTShop_Layout\PTShop_Layout\obj\Debug\net5.0\Razor\Views\ProductDetail\Index.cshtml.g.cs
+C:\Users\asus\Desktop\PTShop_GitRespon\PTShop\PTShop_Layout\PTShop_Layout\bin\Debug\net5.0\Microsoft.Docs.Samples.RouteInfo.dll

@@ -23,6 +23,7 @@ namespace PTShop.GrapQL.Product
                     Status = obj.Status,
                     CreateAt = DateTime.Now,
                     ManufacturerId = obj.ManufacturerId,
+                    Sale = obj.Sale,
                     UpdateAt = DateTime.Now
                 };
 
@@ -46,6 +47,7 @@ namespace PTShop.GrapQL.Product
                     product.CategoryId = obj.CategoryId;
                     product.IsDelete = obj.IsDelete;
                     product.Status = obj.Status;
+                    product.Sale = obj.Sale;
                     product.ManufacturerId = obj.ManufacturerId;
                 }
                 context.SaveChanges();

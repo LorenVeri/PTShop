@@ -89,9 +89,9 @@
     self.getProduct = function () {
         const data = {
             name: "",
-            status: true
+            status: true,
+            sale: true
         }
-
         $.ajax({
             method: "POST",
             url: backendUrl + "/graphql",
@@ -148,7 +148,6 @@
             }
         });
     }
-
 
     //GetBanner
     self.bannerList = ko.observableArray();
@@ -274,6 +273,72 @@
         });
     }
 
+
+    self.listProductSale = ko.observableArray()
+    self.productIsSale = function () {
+        const data = {
+            name: "",
+            status: true,
+            sale: true
+        }
+        $.ajax({
+            method: "POST",
+            url: backendUrl + "/graphql",
+            contentType: "application/json",
+            data: JSON.stringify({
+                query: `query($data: SearchInput!) {
+                          searchProduct(first: ${self.first()},item: $data) {
+                            totalCount
+                            nodes {
+                              id
+                              categoryId
+                              name
+                              description
+                              madeIn
+                              price
+                              manufacturerId
+                              createAt
+                              updateAt
+                              isDelete
+                              status
+                              productPrices {
+                                id
+                                productId
+                                price
+                                createdAt
+                              }
+                              productMedia {
+                                id
+                                productId
+                                uri
+                                product {
+                                    name
+                                }
+                              }
+                              category {
+                                name
+                              }
+                            }
+                          }
+                        }
+                       `,
+                variables: { data }
+            }),
+            success: function (res) {
+                self.productList([]);
+                if (res.data.totalCount != 0) {
+                    $.each(res.data.searchProduct.nodes, function (ex, item) {
+                        self.productList.push(self.convertToKoObject(item));
+                    })
+                }
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
+
+
     self.callApi = function () {
         self.getBanner();
         self.getContact();
@@ -384,6 +449,7 @@
 
     let cookies = document.cookie;
     //console.log(cookies);
+
 }
 
 $(function () {

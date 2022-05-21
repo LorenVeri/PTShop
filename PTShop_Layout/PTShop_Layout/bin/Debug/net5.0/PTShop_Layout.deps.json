@@ -37,6 +37,7 @@
           "Microsoft.AspNetCore.Mvc.NewtonsoftJson": "5.0.17",
           "Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation": "5.0.14",
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": "5.0.2",
+          "Rick.Docs.Samples.RouteInfo": "1.0.0.3",
           "Microsoft.AspNetCore.Antiforgery": "5.0.0.0",
           "Microsoft.AspNetCore.Authentication.Abstractions": "5.0.0.0",
           "Microsoft.AspNetCore.Authentication.Cookies": "5.0.0.0",
@@ -934,6 +935,17 @@
         },
         "compile": {
           "lib/netstandard2.0/Newtonsoft.Json.Bson.dll": {}
+        }
+      },
+      "Rick.Docs.Samples.RouteInfo/1.0.0.3": {
+        "runtime": {
+          "lib/netcoreapp3.1/Microsoft.Docs.Samples.RouteInfo.dll": {
+            "assemblyVersion": "1.0.0.3",
+            "fileVersion": "1.0.0.3"
+          }
+        },
+        "compile": {
+          "lib/netcoreapp3.1/Microsoft.Docs.Samples.RouteInfo.dll": {}
         }
       },
       "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {},
@@ -3623,6 +3635,13 @@
       "sha512": "sha512-QYFyxhaABwmq3p/21VrZNYvCg3DaEoN/wUuw5nmfAf0X3HLjgupwhkEWdgfb9nvGAUIv3osmZoD3kKl4jxEmYQ==",
       "path": "newtonsoft.json.bson/1.0.2",
       "hashPath": "newtonsoft.json.bson.1.0.2.nupkg.sha512"
+    },
+    "Rick.Docs.Samples.RouteInfo/1.0.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-OVRUnI7TVWLGxQAOJy1HklGojkP21x7VH/9uHo8wl7d1dkRBZ0XRY4XSmb7JL5yZP7QyzxSuG++2bc3s1ghF4A==",
+      "path": "rick.docs.samples.routeinfo/1.0.0.3",
+      "hashPath": "rick.docs.samples.routeinfo.1.0.0.3.nupkg.sha512"
     },
     "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl/4.3.0": {
       "type": "package",
