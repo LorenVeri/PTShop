@@ -49,8 +49,12 @@ namespace PTShop_Layout
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
-                    name: "default",
+                    name: "Home",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+                endpoints.MapControllerRoute(
+                    name: "chi-tiet",
+                    pattern: "{controller=ProductDetail}/{action=Index}/{id?}");
             });
         }
     }

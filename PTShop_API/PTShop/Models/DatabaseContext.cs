@@ -7,6 +7,7 @@ namespace PTShop.Models
 {
     public partial class DatabaseContext : DbContext
     {
+
         public DatabaseContext(DbContextOptions<DatabaseContext> options)
             : base(options)
         {
@@ -22,7 +23,6 @@ namespace PTShop.Models
         public virtual DbSet<ProductMedium> ProductMedia { get; set; } = null!;
         public virtual DbSet<ProductPrice> ProductPrices { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
-
 //        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 //        {
 //            if (!optionsBuilder.IsConfigured)
@@ -195,6 +195,8 @@ namespace PTShop.Models
 
                 entity.Property(e => e.Price).HasColumnName("price");
 
+                entity.Property(e => e.Sale).HasColumnName("sale");
+
                 entity.Property(e => e.Status).HasColumnName("status");
 
                 entity.Property(e => e.UpdateAt)
@@ -296,6 +298,8 @@ namespace PTShop.Models
                     .HasMaxLength(100)
                     .HasColumnName("email")
                     .IsFixedLength();
+
+                entity.Property(e => e.Faeces).HasColumnName("faeces");
 
                 entity.Property(e => e.Name)
                     .HasMaxLength(50)

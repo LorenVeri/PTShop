@@ -24,6 +24,7 @@ namespace PTShop.Models
         public bool? IsDelete { get; set; }
         public bool? Status { get; set; }
         public int? CategoryId { get; set; }
+        public bool? Sale { get; set; }
 
         public virtual Category? Category { get; set; }
         public virtual Country? MadeInNavigation { get; set; }

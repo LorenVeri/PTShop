@@ -24,10 +24,10 @@ namespace PTShop.GrapQL.Product
                 query = query.Where(x => x.Status == item.status);
                 return query;
             }
-            //if(item.sale.ToString().Length == 0)
-            //{
-            //    query = query.Where(x => x.Sale == item.sale);
-            //}
+            if (item.sale.ToString().Length == 0)
+            {
+                query = query.Where(x => x.Sale == item.sale);
+            }
             return query;
         }
 

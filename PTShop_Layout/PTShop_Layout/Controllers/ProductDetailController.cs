@@ -2,11 +2,17 @@
 
 namespace PTShop_Layout.Controllers
 {
+    [Route("chi-tiet/[controller]")]
+    [ApiController]
     public class ProductDetailController : Controller
     {
-        public IActionResult Index()
+        
+        [HttpGet("chi-tiet/{id:int}")] // GET /api/test2/int/3
+        public IActionResult Index(int id)
         {
-            return View();
+            return View(id);
         }
+
+        
     }
 }
