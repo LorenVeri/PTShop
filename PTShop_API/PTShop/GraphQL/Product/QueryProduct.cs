@@ -14,19 +14,23 @@ namespace PTShop.GrapQL.Product
         public IQueryable<Models.Product> SearchProduct([ScopedService] DatabaseContext context, SearchInput item)
         {
             IQueryable < Models.Product > query = context.Products.AsQueryable();
-            if(item.name.Length > 0)
+            if(item.Name.Length > 0)
             {
-                query = query.Where(x => x.Name == item.name);
+                query = query.Where(x => x.Name.Contains(item.Name));
                 return query;
             } 
-            if(item.status.ToString().Length > 0)
+            if(item.Status == true)
             {
-                query = query.Where(x => x.Status == item.status);
+                query = query.Where(x => x.Status == item.Status);
                 return query;
             }
-            if (item.sale.ToString().Length == 0)
+            if (item.Sale == true)
             {
-                query = query.Where(x => x.Sale == item.sale);
+                query = query.Where(x => x.Sale == item.Sale);
+            }
+            if (item.IsDelete == true)
+            {
+                query = query.Where(x => x.Sale == item.IsDelete);
             }
             return query;
         }

@@ -2,8 +2,10 @@
 {
     public class SearchInput
     {
-        public string name { get; set; }
-        public bool status { get; set; }
-        public bool sale { get; set; }
+        public string Name { get; set; }
+        public bool IsDelete { get; set; }
+        public bool Sale { get; set; }
+        public bool Status { get; set; }
     }
+    
 }
