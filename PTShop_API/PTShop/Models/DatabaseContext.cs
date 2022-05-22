@@ -7,30 +7,27 @@ namespace PTShop.Models
 {
     public partial class DatabaseContext : DbContext
     {
-
         public DatabaseContext(DbContextOptions<DatabaseContext> options)
             : base(options)
         {
         }
 
         public virtual DbSet<Account> Accounts { get; set; } = null!;
+        public virtual DbSet<Admin> Admins { get; set; } = null!;
+        public virtual DbSet<AdminRole> AdminRoles { get; set; } = null!;
         public virtual DbSet<Banner> Banners { get; set; } = null!;
         public virtual DbSet<Category> Categories { get; set; } = null!;
         public virtual DbSet<Contact> Contacts { get; set; } = null!;
         public virtual DbSet<Country> Countries { get; set; } = null!;
+        public virtual DbSet<Favorite> Favorites { get; set; } = null!;
+        public virtual DbSet<GroupAdmin> GroupAdmins { get; set; } = null!;
         public virtual DbSet<Manufacturer> Manufacturers { get; set; } = null!;
+        public virtual DbSet<Order> Orders { get; set; } = null!;
         public virtual DbSet<Product> Products { get; set; } = null!;
         public virtual DbSet<ProductMedium> ProductMedia { get; set; } = null!;
         public virtual DbSet<ProductPrice> ProductPrices { get; set; } = null!;
+        public virtual DbSet<Transaction> Transactions { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
-//        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//        {
-//            if (!optionsBuilder.IsConfigured)
-//            {
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-//                optionsBuilder.UseSqlServer("Server=DESKTOP-AMJ7HPS;Database=PTSHOP;Trusted_Connection=True;");
-//            }
-//        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -52,6 +49,39 @@ namespace PTShop.Models
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Account_User");
+            });
+
+            modelBuilder.Entity<Admin>(entity =>
+            {
+                entity.ToTable("Admin");
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedNever()
+                    .HasColumnName("id");
+
+                entity.Property(e => e.Email)
+                    .HasMaxLength(100)
+                    .HasColumnName("email")
+                    .IsFixedLength();
+
+                entity.Property(e => e.Name)
+                    .HasMaxLength(50)
+                    .HasColumnName("name");
+
+                entity.Property(e => e.Password)
+                    .HasMaxLength(50)
+                    .HasColumnName("password");
+
+                entity.Property(e => e.Phone).HasColumnName("phone");
+            });
+
+            modelBuilder.Entity<AdminRole>(entity =>
+            {
+                entity.ToTable("AdminRole");
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedNever()
+                    .HasColumnName("id");
             });
 
             modelBuilder.Entity<Banner>(entity =>
@@ -139,6 +169,29 @@ namespace PTShop.Models
                     .HasColumnName("update_at");
             });
 
+            modelBuilder.Entity<Favorite>(entity =>
+            {
+                entity.ToTable("Favorite");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.ProductId).HasColumnName("product_id");
+
+                entity.HasOne(d => d.Product)
+                    .WithMany(p => p.Favorites)
+                    .HasForeignKey(d => d.ProductId)
+                    .HasConstraintName("FK_Favorite_Product");
+            });
+
+            modelBuilder.Entity<GroupAdmin>(entity =>
+            {
+                entity.ToTable("GroupAdmin");
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedNever()
+                    .HasColumnName("id");
+            });
+
             modelBuilder.Entity<Manufacturer>(entity =>
             {
                 entity.ToTable("Manufacturer");
@@ -163,6 +216,39 @@ namespace PTShop.Models
                     .HasColumnName("update_at");
             });
 
+            modelBuilder.Entity<Order>(entity =>
+            {
+                entity.ToTable("Order");
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedNever()
+                    .HasColumnName("id");
+
+                entity.Property(e => e.AmountOrder).HasColumnName("amountOrder");
+
+                entity.Property(e => e.Count).HasColumnName("count");
+
+                entity.Property(e => e.Data)
+                    .HasColumnType("text")
+                    .HasColumnName("data");
+
+                entity.Property(e => e.ProductId).HasColumnName("product_id");
+
+                entity.Property(e => e.Status).HasColumnName("status");
+
+                entity.Property(e => e.TransactionId).HasColumnName("transaction_id");
+
+                entity.HasOne(d => d.Product)
+                    .WithMany(p => p.Orders)
+                    .HasForeignKey(d => d.ProductId)
+                    .HasConstraintName("FK_Order_Product");
+
+                entity.HasOne(d => d.Transaction)
+                    .WithMany(p => p.Orders)
+                    .HasForeignKey(d => d.TransactionId)
+                    .HasConstraintName("FK_Order_Transaction");
+            });
+
             modelBuilder.Entity<Product>(entity =>
             {
                 entity.ToTable("Product");
@@ -175,10 +261,7 @@ namespace PTShop.Models
                     .HasColumnType("datetime")
                     .HasColumnName("create_at");
 
-                entity.Property(e => e.Description)
-                    .HasMaxLength(255)
-                    .HasColumnName("description")
-                    .IsFixedLength();
+                entity.Property(e => e.Description).HasColumnName("description");
 
                 entity.Property(e => e.IsDelete).HasColumnName("isDelete");
 
@@ -199,9 +282,15 @@ namespace PTShop.Models
 
                 entity.Property(e => e.Status).HasColumnName("status");
 
+                entity.Property(e => e.SubDescription)
+                    .HasMaxLength(255)
+                    .HasColumnName("sub_description");
+
                 entity.Property(e => e.UpdateAt)
                     .HasColumnType("datetime")
                     .HasColumnName("update_at");
+
+                entity.Property(e => e.View).HasColumnName("view");
 
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.Products)
@@ -284,6 +373,46 @@ namespace PTShop.Models
                     .HasConstraintName("FK_Product_Price_Product1");
             });
 
+            modelBuilder.Entity<Transaction>(entity =>
+            {
+                entity.ToTable("Transaction");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Amount).HasColumnName("amount");
+
+                entity.Property(e => e.CatogoryId).HasColumnName("catogory_id");
+
+                entity.Property(e => e.CreateAt)
+                    .HasColumnType("datetime")
+                    .HasColumnName("create_at");
+
+                entity.Property(e => e.Message)
+                    .HasMaxLength(255)
+                    .HasColumnName("message");
+
+                entity.Property(e => e.Passersby).HasColumnName("passersby");
+
+                entity.Property(e => e.Payment)
+                    .HasMaxLength(30)
+                    .HasColumnName("payment")
+                    .IsFixedLength();
+
+                entity.Property(e => e.PaymentInfo).HasColumnName("payment_info");
+
+                entity.Property(e => e.Security)
+                    .HasMaxLength(10)
+                    .HasColumnName("security")
+                    .IsFixedLength();
+
+                entity.Property(e => e.UseId).HasColumnName("use_id");
+
+                entity.HasOne(d => d.Use)
+                    .WithMany(p => p.Transactions)
+                    .HasForeignKey(d => d.UseId)
+                    .HasConstraintName("FK_Transaction_User");
+            });
+
             modelBuilder.Entity<User>(entity =>
             {
                 entity.ToTable("User");
@@ -299,11 +428,13 @@ namespace PTShop.Models
                     .HasColumnName("email")
                     .IsFixedLength();
 
-                entity.Property(e => e.Faeces).HasColumnName("faeces");
-
                 entity.Property(e => e.Name)
                     .HasMaxLength(50)
                     .HasColumnName("name");
+
+                entity.Property(e => e.Password)
+                    .HasMaxLength(50)
+                    .HasColumnName("password");
             });
 
             OnModelCreatingPartial(modelBuilder);

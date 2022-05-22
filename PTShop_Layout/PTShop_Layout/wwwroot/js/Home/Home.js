@@ -18,6 +18,23 @@
         }
         toastr['success'](title, msg);
     };
+    self.showtoastError = function (msg, title) {
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "positionClass": "toast-top-right",
+            "onclick": null,
+            "showDuration": "3000",
+            "hideDuration": "3000",
+            "timeOut": "3000",
+            "extendedTimeOut": "3000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        }
+        toastr['error'](title, msg);
+    };
 
     self.convertToKoObject = function (data) {
         var newObj = ko.mapping.fromJS(data);
@@ -49,7 +66,7 @@
     }
 
     //Get Category
-    self.first = ko.observable(100);
+    self.first = ko.observable(32);
     self.categoryList = ko.observableArray();
     self.getCategory = function () {
         $.ajax({
@@ -87,41 +104,27 @@
     //Get Prodcut
     self.productList = ko.observableArray();
     self.getProduct = function () {
-        const data = {
-            name: "",
-            status: true,
-            sale: true
-        }
         $.ajax({
             method: "POST",
             url: backendUrl + "/graphql",
             contentType: "application/json",
             data: JSON.stringify({
-                query: `query($data: SearchInput!) {
-                          searchProduct(first: ${self.first()},item: $data) {
+                query: `query {
+                          product(first: ${self.first()}) {
                             totalCount
                             nodes {
                               id
-                              categoryId
                               name
-                              description
-                              madeIn
                               price
-                              manufacturerId
-                              createAt
-                              updateAt
                               isDelete
                               status
                               productPrices {
-                                id
-                                productId
                                 price
-                                createdAt
+                                productId
                               }
                               productMedia {
-                                id
-                                productId
                                 uri
+                                productId
                                 product {
                                     name
                                 }
@@ -132,13 +135,12 @@
                             }
                           }
                         }
-                       `,
-                variables: { data }
+                       `
             }),
             success: function (res) {
                 self.productList([]);
                 if (res.data.totalCount != 0) {
-                    $.each(res.data.searchProduct.nodes, function (ex, item) {
+                    $.each(res.data.product.nodes, function (ex, item) {
                         self.productList.push(self.convertToKoObject(item));
                     })
                 }
@@ -273,7 +275,52 @@
         });
     }
 
+    //Get Product by IsDelete
+    self.listProductIsDelete = ko.observableArray()
+    self.productIsDelete = function () {
+        const query = `query{
+                      product(where: {isDelete:{eq: true}}){
+                        nodes {
+                          id
+                          name
+                          price
+                          isDelete
+                          status
+                          productPrices {
+                            price
+                            product {
+                                    name
+                                }
+                          }
+                          productMedia {
+                            uri
+                          }
+                        }
+                      }
+                    }
+                `
+        $.ajax({
+            method: "POST",
+            url: backendUrl + "/graphql",
+            contentType: "application/json",
+            data: JSON.stringify({
+                query: query
+            }),
+            success: function (res) {
+                self.listProductIsDelete([]);
+                if (res.data.totalCount != 0) {
+                    $.each(res.data.product.nodes, function (ex, item) {
+                        self.listProductIsDelete.push(self.convertToKoObject(item));
+                    })
+                }
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
 
+    //Get Product by Sale
     self.listProductSale = ko.observableArray()
     self.productIsSale = function () {
         const data = {
@@ -286,49 +333,34 @@
             url: backendUrl + "/graphql",
             contentType: "application/json",
             data: JSON.stringify({
-                query: `query($data: SearchInput!) {
-                          searchProduct(first: ${self.first()},item: $data) {
-                            totalCount
-                            nodes {
-                              id
-                              categoryId
-                              name
-                              description
-                              madeIn
-                              price
-                              manufacturerId
-                              createAt
-                              updateAt
-                              isDelete
-                              status
-                              productPrices {
-                                id
-                                productId
-                                price
-                                createdAt
-                              }
-                              productMedia {
-                                id
-                                productId
-                                uri
-                                product {
-                                    name
-                                }
-                              }
-                              category {
-                                name
-                              }
-                            }
+                query: `query{
+                      product(where: {sale:{eq: true}}){
+                        nodes {
+                          id
+                          name
+                          price
+                          isDelete
+                          status
+                          productPrices {
+                            price
+                             product {
+                                      name
+                                    }
+                          }
+                          productMedia {
+                            uri
                           }
                         }
+                      }
+                    }
                        `,
                 variables: { data }
             }),
             success: function (res) {
-                self.productList([]);
+                self.listProductSale([]);
                 if (res.data.totalCount != 0) {
-                    $.each(res.data.searchProduct.nodes, function (ex, item) {
-                        self.productList.push(self.convertToKoObject(item));
+                    $.each(res.data.product.nodes, function (ex, item) {
+                        self.listProductSale.push(self.convertToKoObject(item));
                     })
                 }
             },
@@ -338,6 +370,55 @@
         });
     }
 
+    //Get Product by Sale
+    self.listProductStatus = ko.observableArray()
+    self.productIsStatus = function () {
+        const data = {
+            name: "",
+            status: true,
+            sale: true
+        }
+        $.ajax({
+            method: "POST",
+            url: backendUrl + "/graphql",
+            contentType: "application/json",
+            data: JSON.stringify({
+                query: `query{
+                      product(where: {status:{eq: true}}, first: 3){
+                        nodes {
+                          id
+                          name
+                          price
+                          isDelete
+                          status
+                          productPrices {
+                            price
+                            product {
+                                    name
+                                }
+                          }
+                          productMedia {
+                            uri
+                          }
+                        }
+                      }
+                    }
+                       `,
+                variables: { data }
+            }),
+            success: function (res) {
+                self.listProductStatus([]);
+                if (res.data.totalCount != 0) {
+                    $.each(res.data.product.nodes, function (ex, item) {
+                        self.listProductStatus.push(self.convertToKoObject(item));
+                    })
+                }
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    }
 
     self.callApi = function () {
         self.getBanner();
@@ -345,6 +426,9 @@
         self.getProduct();
         self.getCategory();
         self.getMedia();
+        self.productIsStatus();
+        self.productIsSale();
+        self.productIsDelete();
     }
 
     self.cart = ko.observableArray();
@@ -442,13 +526,72 @@
             $.each(listCart, function (idx, item) {
                 self.cart.push(self.convertToKoObject(item));
             });
-
-            console.log(listCart);
         }
     }
 
     let cookies = document.cookie;
     //console.log(cookies);
+
+    //Get Prodcut
+    self.productList = ko.observableArray();
+    self.searchProduct = function () {
+        if ($("#searchKey").val() == "") {
+            self.showtoastState("Bạn chưa nhập nội dung tìm kiếm!")
+        } else {
+            var data = {
+                name: $("#searchKey").val(),
+                isDelete: false,
+                sale: false,
+                status: true
+            }
+            $.ajax({
+                method: "POST",
+                url: backendUrl + "/graphql",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    query: `query ($data: SearchInput!) {
+                          searchProduct(first: 30, item: $data) {
+                            totalCount
+                            nodes {
+                              id
+                              name
+                              price
+                              isDelete
+                              status
+                              productPrices {
+                                price
+                              }
+                              productMedia {
+                                uri
+                                product {
+                                  name
+                                }
+                              }
+                              category {
+                                name
+                              }
+                            }
+                          }
+                        }
+                       `,
+                    variables: {
+                        data
+                    }
+                }),
+                success: function (res) {
+                    self.productList([]);
+                    if (res.data.totalCount != 0) {
+                        $.each(res.data.searchProduct.nodes, function (ex, item) {
+                            self.productList.push(self.convertToKoObject(item));
+                        })
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        }
+    }
 
 }
 

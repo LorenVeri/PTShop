@@ -167,6 +167,7 @@
             if (cart != null) {
                 if (item.id() == cart.id()) {
                     self.cart.remove(cart);
+                    self.showtoastState("Đã xóa sản phẩm khỏi giỏ hàng!")
                 }
             }
         });

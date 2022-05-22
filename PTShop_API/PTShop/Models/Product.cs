@@ -7,6 +7,8 @@ namespace PTShop.Models
     {
         public Product()
         {
+            Favorites = new HashSet<Favorite>();
+            Orders = new HashSet<Order>();
             ProductMedia = new HashSet<ProductMedium>();
             ProductPrices = new HashSet<ProductPrice>();
             Products = new HashSet<Product>();
@@ -25,9 +27,13 @@ namespace PTShop.Models
         public bool? Status { get; set; }
         public int? CategoryId { get; set; }
         public bool? Sale { get; set; }
+        public int? View { get; set; }
+        public string? SubDescription { get; set; }
 
         public virtual Category? Category { get; set; }
         public virtual Country? MadeInNavigation { get; set; }
+        public virtual ICollection<Favorite> Favorites { get; set; }
+        public virtual ICollection<Order> Orders { get; set; }
         public virtual ICollection<ProductMedium> ProductMedia { get; set; }
         public virtual ICollection<ProductPrice> ProductPrices { get; set; }
 
