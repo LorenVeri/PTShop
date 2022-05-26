@@ -1,11 +1,12 @@
-﻿@{
-    ViewData["Title"] = "Shopping Cart";
+﻿
+@{
+    ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 @using Microsoft.AspNetCore.Http;
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
-
 <script>
     const backendUrl = @Json.Serialize(@Configuration.GetSection("Domain").GetSection("Backend").Value);
 </script>
@@ -88,8 +89,9 @@
     </div>
 </header>
 <!-- Header Section End -->
+
 <!-- Hero Section Begin -->
-<section class="hero">
+<section class="hero hero-normal">
     <div class="container">
         <div class="row">
             <div class="col-lg-3">
@@ -110,11 +112,9 @@
                             <div class="hero__search__categories">
                                 Danh mục
                                 <span class="arrow_carrot-down"></span>
-                                <div>
-                                </div>
                             </div>
-                            <input type="text" placeholder="Tên sản phẩm?">
-                            <button type="submit" class="site-btn">Tìm kiếm</button>
+                            <input data-bind="value: $root.keySearch" type="text" placeholder="Nhập tên sản phẩm">
+                            <button data-bind="click: $root.gotoSearch" class="site-btn">Tìm kiếm</button>
                         </form>
                     </div>
                     <div class="hero__search__phone">
@@ -127,125 +127,103 @@
                         </div>
                     </div>
                 </div>
-                <div class="hero__item set-bg" data-setbg="https://belux.com.vn/wp-content/uploads/2022/04/2-1.jpg">
-                    <div class="hero__text">
-                        <span>OGANI SHOP</span>
-                        <h2>Sang trọng<br />Đẳng cấp</h2>
-                        <p>Đồ phong thủy mạ vàng</p>
-                        <a href="#" class="primary-btn">Xem ngay</a>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
 </section>
 <!-- Hero Section End -->
 
-
-<div id="shopping-cart">
-    <!-- Breadcrumb Section Begin -->
-    <section class="breadcrumb-section set-bg" data-setbg="https://belux.com.vn/wp-content/uploads/2020/04/%E1%BA%A3nh-li%C3%AAn-h%E1%BB%87.jpg">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <div class="breadcrumb__text">
-                        <h2>Giỏ hàng</h2>
-                        <div class="breadcrumb__option">
-                            <a href="./Home">Trang chủ</a>
-                            <span>Giỏ hàng</span>
-                        </div>
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-section set-bg" style="background: #222a35;">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    <h2>Tìm kiếm</h2>
+                    <div class="breadcrumb__option">
+                        <a href="/Home">Trang chủ</a>
+                        <span>Tìm kiếm</span>
                     </div>
+                    <h3 style="padding: 15px 0;color: white">Kết quả tìm kiếm của từ khóa:
+                        <strong data-bind="text: $root.keySearch"> </strong>
+                    </h3>
                 </div>
             </div>
         </div>
-    </section>
-    <!-- Breadcrumb Section End -->
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
 
-    <!-- Shoping Cart Section Begin -->
-    <section class="shoping-cart spad" id="ShopCart">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="shoping__cart__table">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th class="shoping__product">Sản phẩm</th>
-                                    <th>Giá</th>
-                                    <th>Số lượng</th>
-                                    <th>Tổng tiền</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody data-bind="foreach: $root.cart">
-                                <tr>
-                                    <td class="shoping__cart__item" data-bind="foreach: productMedia">
-                                        <img style="width: 20%;" data-bind="attr:{src: uri}">
-                                        <h5>
-                                            <a data-bind="attr: { href: '/chi-tiet/' + productId() +'-' + $root.slugifyLink(product.name())}" style="font-weight: 700; color: #000 !important;">
-                                                <span data-bind="text: product.name"></span>
-                                            </a>
-                                        </h5>
-                                    </td>
-                                    <td class="shoping__cart__price" data-bind="foreach: productPrices">
-                                        <p data-bind="text: $root.formatToVND(price)"></p>
-                                    </td>
-                                    <td class="shoping__cart__quantity">
-                                        <div class="quantity">
-                                            <div class="pro-qty" data-bind="click: $root.setchange">
-                                                <input type="number" class="input-text qty text" step="1" min="1" max="1000" name="quantity" title="Qty" size="6" data-bind="attr: {id: 'spin_' + id(), value: Count()}">
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="shoping__cart__total" data-bind="text: $root.countPrice($data)">
-                                    </td>
-                                    <td class="shoping__cart__item__close">
-                                        <span data-bind="click: $root.removeCart" class="icon_close"></span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+<!--ko if: $root.productList() != ""-->
+<!-- Featured Section Begin -->
+<section class="featured spad" id="ListProduct">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="section-title">
+                    <h2>Sản phẩm nổi bật</h2>
+                </div>
+                <div class="featured__controls" style="display: none;">
+                    <ul data-bind="foreach: $root.productList">
+                        @*<li class="active">Tất cả sản phẩm</li>*@
+                        <li data-bind="text: category.name"></li>
+                    </ul>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="shoping__cart__btns">
-                        <a href="/Home/#ListProduct" class="primary-btn cart-btn">TIẾP TỤC MUA HÀNG</a>
-                        <a href="#ShopCart" class="primary-btn cart-btn cart-btn-right"><span class="icon_loading"></span>
-                        </a>
+        </div>
+        <div data-bind="foreach: $root.productList" class="row featured__filter">
+            <div class="col-lg-3 col-md-4 col-sm-6 mix oranges fresh-meat">
+                <div class="featured__item">
+                    <div class="featured__item__pic set-bg" data-bind="foreach: productMedia">
+                        <img class="product_img" data-bind="attr:{src: uri}"/>
                     </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="shoping__continue">
-                        <div class="shoping__discount">
-                            <h5>Mã giảm giá</h5>
-                            <form action="#">
-                                <input type="text" placeholder="Nhập mã giảm giá">
-                                <button type="submit" class="site-btn">Áp dụng</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="shoping__checkout">
-                        <h5>Hóa đơn</h5>
-                        <ul>
-                            <li>Giảm giá <span>0</span></li>
-                            <li>Tổng tiền
-                                <span data-bind="text: $root.totalCart()">$454.98</span>
-                            </li>
+                    <div class="featured__item__pic set-bg" style="position: absolute; top: 0; width: 265px; z-index: 0;">
+                        <ul class="featured__item__pic__hover">
+                            <li><a data-bind="click: $root.addToFavorite" href="#"><i class="fa fa-heart"></i></a></li>
+                            <li><a href="#"><i class="fa fa-retweet"></i></a></li>
+                            <li><a data-bind="click: $root.addToCart" href="#"><i class="fa fa-shopping-cart"></i></a></li>
                         </ul>
-                        <a href="#" class="primary-btn">Thanh toán</a>
+                    </div>
+                    <div class="featured__item__text">
+                        <h6>
+                            <a data-bind="attr: { href: '/chi-tiet/' + id() +'-' + $root.slugifyLink(name())}"  style="font-weight: 700;">
+                                <span data-bind="text: name"></span>
+                            </a>
+                        </h6>
+                        <div style="justify-content: center;width: 100%;display: flex">
+                            <del style="font-size: 17px; opacity: 0.8; margin-right: 1rem;">
+                                <h5 data-bind="text: $root.formatToVND(price)"></h5>
+                            </del>
+                            <div data-bind="foreach: productPrices">
+                                <h5 data-bind="text: $root.formatToVND(price)"></h5>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
-    <!-- Shoping Cart Section End -->
-</div>
+    </div>
+</section>
+<!-- Featured Section End -->
+<!--/ko-->
+
+<!--ko if: $root.productList() == ""-->
+<!-- Featured Section Begin -->
+<section class="featured spad" id="ListProduct">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="section-title">
+                    <h2>Không tìm thấy sản phẩm</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Featured Section End -->
+<!--/ko-->
+
 @section scripts
 {
-    <script src="./js/ShoppingCart/ShoppingCart.js"></script>
+    <script src="~/js/Search/Search.js"></script>
 }
-

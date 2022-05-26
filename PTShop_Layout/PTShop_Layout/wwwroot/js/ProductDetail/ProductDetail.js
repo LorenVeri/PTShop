@@ -49,6 +49,14 @@
         window.location.href = '/chi-tiet/' + item.ID() + '-' + self.slugifyLink(item.Name());
     }
 
+    //self.Url = ko.observable();
+    //self.bindUrl = function () {
+    //    let url = window.location.href;
+    //    url = url.split("/")[4].split("-");
+    //    url.shift();
+    //    self.Url(url.join(" "));
+    //}
+
     self.slugifyLink = function (str) {
         str = str.replace(/^\s+|\s+$/g, ''); // trim
         str = str.toLowerCase();
@@ -367,6 +375,15 @@
         }
     }
 
+    self.getFavorite = function () {
+        if (simpleStorage.hasKey("favorite")) {
+            var listFavorite = simpleStorage.get("favorite");
+            $.each(listFavorite, function (idx, item) {
+                self.favorite.push(self.convertToKoObject(item));
+            });
+        }
+    }
+
     let cookies = document.cookie;
     //console.log(cookies);
     self.getUrl = function () {
@@ -376,11 +393,18 @@
         self.getProduct(id)
     }
 
+    self.keySearch = ko.observable();
+    self.gotoSearch = function () {
+        window.location.href = '/search?keysearch=' + self.keySearch();
+    }
+
 }
 
 $(function () {
     const viewModal = new ViewModal();
     viewModal.callApi();
     viewModal.getCart();
+    viewModal.getFavorite();
+    //viewModal.bindUrl();
     ko.applyBindings(viewModal);
 })

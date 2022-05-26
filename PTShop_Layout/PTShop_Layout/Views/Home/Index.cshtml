@@ -4,9 +4,13 @@
 @using Microsoft.AspNetCore.Http;
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
+<script>
+    const backendUrl = @Json.Serialize(@Configuration.GetSection("Domain").GetSection("Backend").Value);
+</script>
 
 <!-- Header Section Begin -->
 <header class="header">
+    <a id="button">aasas</a>
     <div class="header__top">
         <div class="container">
             <div class="row">
@@ -43,35 +47,37 @@
             </div>
         </div>
     </div>
-    <div class="container">
+    <div class="container-fluid header-sticky">
         <div class="row">
-            <div class="col-lg-3">
+            <div class="container" style="display: flex;">
+                <div class="col-lg-3">
                 <div class="header__logo">
                     <a href="/Home"><img src="img/logo.png" alt=""></a>
                 </div>
-            </div>
-            <div class="col-lg-6">
-                <nav class="header__menu">
-                    <ul>
-                        <li class="active"><a href="./Home">Trang chủ</a></li>
-                        <li><a href="./ShopCart">Cửa hàng</a>
-                            <ul class="header__menu__dropdown">
-                                <li><a href="./ProductDetail">Danh sách sản phẩm</a></li>
-                                <li><a href="./ShopCart">Giỏ Hàng</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="./blog.html">Blog</a></li>
-                        <li><a href="./contact.html">Liên hệ</a></li>
-                    </ul>
-                </nav>
-            </div>
-            <div class="col-lg-3">
-                <div class="header__cart">
-                    <ul>
-                        <li><a href="#"><i class="fa fa-heart"></i> <span data-bind="text: $root.favorite().length"></span></a></li>
-                        <li><a href="/ShopCart"><i class="fa fa-shopping-bag"></i> <span data-bind="text: $root.cart().length"></span></a></li>
-                    </ul>
-                    <div class="header__cart__price">Tổng tiền: <span data-bind="text: $root.totalCart()"></span></div>
+                </div>
+                <div class="col-lg-6">
+                    <nav class="header__menu">
+                        <ul>
+                            <li class="active"><a href="./Home">Trang chủ</a></li>
+                            <li><a href="./ShopCart">Cửa hàng</a>
+                                <ul class="header__menu__dropdown">
+                                    <li><a href="./ProductDetail">Danh sách sản phẩm</a></li>
+                                    <li><a href="./ShopCart">Giỏ Hàng</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="./blog.html">Blog</a></li>
+                            <li><a href="./contact.html">Liên hệ</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-lg-3">
+                    <div class="header__cart">
+                        <ul>
+                            <li><a href="#"><i class="fa fa-heart"></i> <span data-bind="text: $root.favorite().length"></span></a></li>
+                            <li><a href="/ShopCart"><i class="fa fa-shopping-bag"></i> <span data-bind="text: $root.cart().length"></span></a></li>
+                        </ul>
+                        <div class="header__cart__price">Tổng tiền: <span data-bind="text: $root.totalCart()"></span></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -82,10 +88,6 @@
 </header>
 <!-- Header Section End -->
 
-<div>
-    <script>
-    const backendUrl = @Json.Serialize(@Configuration.GetSection("Domain").GetSection("Backend").Value);
-</script>
 <!-- Hero Section Begin -->
 <section class="hero">
     <div class="container">
@@ -111,8 +113,8 @@
                                 <div>
                                 </div>
                             </div>
-                            <input id="searchKey" type="text" placeholder="Tên sản phẩm?">
-                            <button data-bind="click: $root.searchProduct" class="site-btn">Tìm kiếm
+                            <input data-bind="value: $root.keySearch" type="text" placeholder="Nhập tên sản phẩm">
+                            <button data-bind="click: $root.gotoSearch" class="site-btn">Tìm kiếm</button>
                             </button>
                         </form>
                     </div>
@@ -177,7 +179,7 @@
 <!-- Categories Section End -->
 
 <!-- Featured Section Begin -->
-<section class="featured spad" id="Product">
+<section class="featured spad" id="ListProduct">
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
@@ -195,10 +197,15 @@
         <div data-bind="foreach: $root.productList" class="row featured__filter">
             <div class="col-lg-3 col-md-4 col-sm-6 mix oranges fresh-meat">
                 <div class="featured__item">
-                    <div>
-                        <div class="product_hover" data-bind="foreach: productMedia">
-                            <img class="product_img" data-bind="attr:{src: uri}"/>
-                        </div>
+                    <div class="featured__item__pic set-bg" data-bind="foreach: productMedia">
+                        <img class="product_img" data-bind="attr:{src: uri}"/>
+                    </div>
+                    <div class="featured__item__pic set-bg" style="position: absolute; top: 0; width: 265px; z-index: 0;">
+                        <ul class="featured__item__pic__hover">
+                            <li><a data-bind="click: $root.addToFavorite" href="#"><i class="fa fa-heart"></i></a></li>
+                            <li><a href="#"><i class="fa fa-retweet"></i></a></li>
+                            <li><a data-bind="click: $root.addToCart" href="#"><i class="fa fa-shopping-cart"></i></a></li>
+                        </ul>
                     </div>
                     <div class="featured__item__text">
                         <h6>
@@ -214,13 +221,6 @@
                                 <h5 data-bind="text: $root.formatToVND(price)"></h5>
                             </div>
                         </div>
-                    </div>
-                    <div class="design_hover">
-                        <ul class="custom_hover">
-                            <li><a data-bind="click: $root.addToFavorite" href="#"><i class="fa fa-heart"></i></a></li>
-                            <li><a href="#"><i class="fa fa-retweet"></i></a></li>
-                            <li><a data-bind="click: $root.addToCart" href="#"><i class="fa fa-shopping-cart"></i></a></li>
-                        </ul>
                     </div>
                 </div>
             </div>
@@ -251,9 +251,9 @@
                         <h4>Sản phẩm hot</h4>
                         <div class="latest-product__slider owl-carousel">
                             <div class="latest-prdouct__slider__item" data-bind="foreach: $root.listProductStatus">
-                                <a href="#" class="latest-product__item">
+                                <a data-bind="attr: { href: '/chi-tiet/' + id() +'-' + $root.slugifyLink(name())}" class="latest-product__item">
                                     <div class="latest-product__item__pic"  data-bind="foreach: productMedia">
-                                        <img data-bind="attr:{src: uri}" alt="">
+                                        <img class="img-hover" data-bind="attr:{src: uri}" alt="">
                                     </div>
                                     <div class="latest-product__item__text" data-bind="foreach: productPrices">
                                         <h6 data-bind="text: product.name"></h6>
@@ -262,9 +262,9 @@
                                 </a>
                             </div>
                             <div class="latest-prdouct__slider__item" data-bind="foreach: $root.listProductStatus">
-                                <a href="#" class="latest-product__item">
+                                <a data-bind="attr: { href: '/chi-tiet/' + id() +'-' + $root.slugifyLink(name())}" class="latest-product__item">
                                     <div class="latest-product__item__pic"  data-bind="foreach: productMedia">
-                                        <img data-bind="attr:{src: uri}" alt="">
+                                        <img class="img-hover" data-bind="attr:{src: uri}" alt="">
                                     </div>
                                     <div class="latest-product__item__text" data-bind="foreach: productPrices">
                                         <h6 data-bind="text: product.name"></h6>
@@ -280,20 +280,21 @@
                         <h4>Mua nhiều nhất</h4>
                         <div class="latest-product__slider owl-carousel">
                             <div class="latest-prdouct__slider__item" data-bind="foreach: $root.listProductIsDelete">
-                                <a href="#" class="latest-product__item">
+                                <a data-bind="attr: { href: '/chi-tiet/' + id() +'-' + $root.slugifyLink(name())}" class="latest-product__item">
                                     <div class="latest-product__item__pic"  data-bind="foreach: productMedia">
-                                        <img data-bind="attr:{src: uri}" alt="">
+                                        <img class="img-hover" data-bind="attr:{src: uri}" alt="">
                                     </div>
                                     <div class="latest-product__item__text" data-bind="foreach: productPrices">
-                                        <h6 data-bind="text: product.name"></h6>
+                                        <h6 data-bind="text: product.name">
+                                        </h6>
                                         <span data-bind="text: $root.formatToVND(price)"></span>
                                     </div>
                                 </a>
                             </div>
                             <div class="latest-prdouct__slider__item" data-bind="foreach: $root.listProductIsDelete">
-                                <a href="#" class="latest-product__item">
+                                <a data-bind="attr: { href: '/chi-tiet/' + id() +'-' + $root.slugifyLink(name())}" class="latest-product__item">
                                     <div class="latest-product__item__pic"  data-bind="foreach: productMedia">
-                                        <img data-bind="attr:{src: uri}" alt="">
+                                        <img class="img-hover" data-bind="attr:{src: uri}" alt="">
                                     </div>
                                     <div class="latest-product__item__text" data-bind="foreach: productPrices">
                                         <h6 data-bind="text: product.name"></h6>
@@ -309,9 +310,9 @@
                         <h4>Giá tốt nhất</h4>
                         <div class="latest-product__slider owl-carousel">
                             <div class="latest-prdouct__slider__item" data-bind="foreach: $root.listProductSale">
-                                <a href="#" class="latest-product__item">
+                                <a data-bind="attr: { href: '/chi-tiet/' + id() +'-' + $root.slugifyLink(name())}" class="latest-product__item">
                                     <div class="latest-product__item__pic"  data-bind="foreach: productMedia">
-                                        <img data-bind="attr:{src: uri}" alt="">
+                                        <img class="img-hover" data-bind="attr:{src: uri}" alt="">
                                     </div>
                                     <div class="latest-product__item__text" data-bind="foreach: productPrices">
                                         <h6 data-bind="text: product.name"></h6>
@@ -320,9 +321,9 @@
                                 </a>
                             </div>
                             <div class="latest-prdouct__slider__item" data-bind="foreach: $root.listProductSale">
-                                <a href="#" class="latest-product__item">
+                                <a data-bind="attr: { href: '/chi-tiet/' + id() +'-' + $root.slugifyLink(name())}" class="latest-product__item">
                                     <div class="latest-product__item__pic"  data-bind="foreach: productMedia">
-                                        <img data-bind="attr:{src: uri}" alt="">
+                                        <img class="img-hover" data-bind="attr:{src: uri}" alt="">
                                     </div>
                                     <div class="latest-product__item__text" data-bind="foreach: productPrices">
                                         <h6 data-bind="text: product.name"></h6>

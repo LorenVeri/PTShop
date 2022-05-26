@@ -1,38 +1,5 @@
-﻿const ShopViewModal = function () {
+﻿const ViewModal = function () {
     const self = this;
-
-    self.convertToKoObject = function (data) {
-        var newObj = ko.mapping.fromJS(data);
-        return newObj;
-    }
-
-    self.formatToVND = function (total) {
-        var vnd = parseFloat(total);
-        return total().toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
-    };
-
-
-    self.gotoItem = function (item) {
-        window.location.href = '/chi-tiet/' + item.ID() + '-' + self.slugifyLink(item.Name());
-    }
-
-    self.showtoastState = function (msg, title) {
-        toastr.options = {
-            "closeButton": true,
-            "debug": false,
-            "positionClass": "toast-top-right",
-            "onclick": null,
-            "showDuration": "3000",
-            "hideDuration": "3000",
-            "timeOut": "3000",
-            "extendedTimeOut": "3000",
-            "showEasing": "swing",
-            "hideEasing": "linear",
-            "showMethod": "fadeIn",
-            "hideMethod": "fadeOut"
-        }
-        toastr['success'](title, msg);
-    };
 
     self.showtoastError = function (msg, title) {
         toastr.options = {
@@ -52,6 +19,20 @@
         toastr['error'](title, msg);
     };
 
+    self.convertToKoObject = function (data) {
+        var newObj = ko.mapping.fromJS(data);
+        return newObj;
+    }
+
+    self.formatToVND = function (total) {
+        var vnd = parseFloat(total);
+        return total().toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+    };
+
+    self.gotoItem = function (item) {
+        window.location.href = '/chi-tiet/' + item.ID() + '-' + self.slugifyLink(item.Name());
+    }
+
     self.slugifyLink = function (str) {
         str = str.replace(/^\s+|\s+$/g, ''); // trim
         str = str.toLowerCase();
@@ -68,7 +49,7 @@
     }
 
     //Get Category
-    self.first = ko.observable(100);
+    self.first = ko.observable(32);
     self.categoryList = ko.observableArray();
     self.getCategory = function () {
         $.ajax({
@@ -77,13 +58,9 @@
             contentType: "application/json",
             data: JSON.stringify({
                 query: `query {
-                          category(first:  12 ) {
+                          category(first:  12) {
                             nodes {
-                              id
                               name
-                              parentId
-                              createAt
-                              updateAt
                             }
                           }
                         }
@@ -103,16 +80,36 @@
         });
     }
 
+    self.keySearch = ko.observable();
+    self.getkeySearch = function () {
+        var params = window.location.href;
+        var url = new URL(params);
+        var keysearch = url.searchParams.get("keysearch");
+        self.keySearch(keysearch);
+        if (simpleStorage.hasKey("cart")) {
+            var listCart = simpleStorage.get("cart");
+            $.each(listCart, function (idx, item) {
+                self.cart.push(self.convertToKoObject(item));
+                self.searchProduct(self.keySearch());
+            });
+        }
+    }
+
+    self.gotoSearch = function () {
+        if (self.keySearch() == "") {
+            self.showtoastError("Bạn chưa nhập nội dung tìm kiếm!")
+        } else {
+            window.location.href = '/search?keysearch=' + self.keySearch();
+        }
+    }
+
     self.callApi = function () {
-        //self.getBanner();
-        //self.getContact();
-        //self.getProduct();
         self.getCategory();
-        //self.getMedia();
     }
 
     self.cart = ko.observableArray();
     self.addToCart = function (item) {
+        console.log(item);
         if (item.Count == null) {
             item.Count = ko.observable(1);
         }
@@ -123,27 +120,20 @@
                     var count = cart.Count();
                     cart.Count(count += 1);
                     isFind = true;
+                    self.showtoastState("Đã thêm sản phẩm vào giỏ hàng!")
                 }
             });
             if (isFind == false) {
                 self.cart.push(item);
+                self.showtoastState("Đã thêm mới sản phẩm vào giỏ hàng!")
             }
         }
         else {
             self.cart.push(item);
+            self.showtoastState("Đã thêm mới sản phẩm vào giỏ hàng!")
         }
-        simpleStorage.set("cart", ko.toJS(self.cart(), { TTL: 100 }));
+        simpleStorage.set("cart", ko.toJS(self.cart(), { TTL: 1000000 }));
         self.saveCookie(self.cart());
-        toastr.info('Bạn đã thêm vào giỏ hàng thành công!');
-    }
-
-    self.getCart = function () {
-        if (simpleStorage.hasKey("cart")) {
-            var listCart = simpleStorage.get("cart");
-            $.each(listCart, function (idx, item) {
-                self.cart.push(self.convertToKoObject(item));
-            });
-        }
     }
 
     self.favorite = ko.observableArray();
@@ -158,17 +148,28 @@
                     var count = cart.Count();
                     cart.Count(count += 1);
                     isFind = true;
+                    toastr.info('Đã thêm sản phẩm vào yêu thích!');
                 }
             });
             if (isFind == false) {
                 self.favorite.push(item);
+                toastr.info('Đã thêm mới sản phẩm vào yêu thích!');
             }
         }
         else {
             self.favorite.push(item);
+            toastr.info('Đã thêm mới sản phẩm vào yêu thích!');
         }
         simpleStorage.set("favorite", ko.toJS(self.favorite(), { TTL: 100000 }));
-        toastr.info('Bạn đã thêm vào giỏ hàng thành công!');
+    }
+
+    self.getCart = function () {
+        if (simpleStorage.hasKey("cart")) {
+            var listCart = simpleStorage.get("cart");
+            $.each(listCart, function (idx, item) {
+                self.cart.push(self.convertToKoObject(item));
+            });
+        }
     }
 
     self.getFavorite = function () {
@@ -202,45 +203,89 @@
         else {
             total = cart.price() * cart.Count();
         }
-        var vnd = parseFloat(total);
-        return vnd.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
-    }
-
-    self.removeCart = function (item) {
-        console.log(item);
-        $.each(self.cart(), function (idx, cart) {
-            if (cart != null) {
-                if (item.id() == cart.id()) {
-                    self.cart.remove(cart);
-                    self.showtoastState("Đã xóa sản phẩm khỏi giỏ hàng!")
-                }
-            }
-        });
-        simpleStorage.set("cart", ko.toJS(self.cart()));
+        //var vnd = parseFloat(total);
+        //return total().toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
     }
 
     self.saveCookie = function (cart) {
         let d = new Date();
         $(cart).each(function (ex, item) {
-            console.log(item);
             item = JSON.stringify(item);
         });
         document.cookie = "cart=" + cart + "; expires=Thu, 30 Dec 2022 12:00:00 UTC ;path=/";
     }
 
-    self.setchange = function (item) {
-        var count = document.getElementById("spin_" + item.id()).value;
-        item.Count(count);
-    }
-
     let cookies = document.cookie;
     //console.log(cookies);
+
+    //Search Prodcut
+    self.productList = ko.observableArray();
+    self.searchProduct = function (keysearch) {
+        if (keysearch == null) {
+            self.showtoastError("Bạn chưa nhập nội dung tìm kiếm!")
+        } else {
+            var data = {
+                name: keysearch,
+                isDelete: false,
+                sale: false,
+                status: false
+            }
+            $.ajax({
+                method: "POST",
+                url: backendUrl + "/graphql",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    query: `query ($data: SearchInput!) {
+                          searchProduct(first: 100, item: $data) {
+                            totalCount
+                            nodes {
+                              id
+                              name
+                              price
+                              productPrices {
+                                price
+                                productId
+                              }
+                              productMedia {
+                                uri
+                                productId
+                                product {
+                                  name
+                                }
+                              }
+                              category {
+                                name
+                              }
+                            }
+                          }
+                        }
+                       `,
+                    variables: {
+                        data
+                    }
+                }),
+                success: function (res) {
+                    self.productList([]);
+                    if (res.data.totalCount != 0) {
+                        $.each(res.data.searchProduct.nodes, function (ex, item) {
+                            self.productList.push(self.convertToKoObject(item));
+                        })
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        }
+    }
+
 }
 
 $(function () {
-    const shopViewModal = new ShopViewModal();
-    shopViewModal.callApi();
-    shopViewModal.getFavorite();
-    shopViewModal.getCart();
-    ko.applyBindings(shopViewModal);
+    const viewModal = new ViewModal();
+    viewModal.callApi();
+    viewModal.getkeySearch();
+    viewModal.getFavorite();
+    viewModal.getCart();
+    ko.applyBindings(viewModal);
 })

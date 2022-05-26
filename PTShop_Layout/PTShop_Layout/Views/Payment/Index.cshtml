@@ -1,0 +1,15 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using Microsoft.AspNetCore.Http;
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+
+<script>
+    const backendUrl = @Json.Serialize(@Configuration.GetSection("Domain").GetSection("Backend").Value);
+</script>
+
+

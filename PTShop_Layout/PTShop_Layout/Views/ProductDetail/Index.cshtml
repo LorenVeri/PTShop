@@ -49,35 +49,37 @@
             </div>
         </div>
     </div>
-    <div class="container">
+    <div class="container-fluid header-sticky">
         <div class="row">
-            <div class="col-lg-3">
+            <div class="container" style="display: flex;">
+                <div class="col-lg-3">
                 <div class="header__logo">
                     <a href="/Home"><img src="img/logo.png" alt=""></a>
                 </div>
-            </div>
-            <div class="col-lg-6">
-                <nav class="header__menu">
-                    <ul>
-                        <li class="active"><a href="./Home">Trang chủ</a></li>
-                        <li><a href="./ShopCart">Cửa hàng</a>
-                            <ul class="header__menu__dropdown">
-                                <li><a href="./shop-details.html">Danh sách sản phẩm</a></li>
-                                <li><a href="./ShopCart">Giỏ Hàng</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="./blog.html">Blog</a></li>
-                        <li><a href="./contact.html">Liên hệ</a></li>
-                    </ul>
-                </nav>
-            </div>
-            <div class="col-lg-3">
-                <div class="header__cart">
-                    <ul>
-                        <li><a href="#"><i class="fa fa-heart"></i> <span data-bind="text: $root.favorite().length"></span></a></li>
-                        <li><a href="/ShopCart"><i class="fa fa-shopping-bag"></i> <span data-bind="text: $root.cart().length"></span></a></li>
-                    </ul>
-                    <div class="header__cart__price">Tổng tiền: <span data-bind="text: $root.totalCart()"></span></div>
+                </div>
+                <div class="col-lg-6">
+                    <nav class="header__menu">
+                        <ul>
+                            <li class="active"><a href="./Home">Trang chủ</a></li>
+                            <li><a href="./ShopCart">Cửa hàng</a>
+                                <ul class="header__menu__dropdown">
+                                    <li><a href="./ProductDetail">Danh sách sản phẩm</a></li>
+                                    <li><a href="./ShopCart">Giỏ Hàng</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="./blog.html">Blog</a></li>
+                            <li><a href="./contact.html">Liên hệ</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="col-lg-3">
+                    <div class="header__cart">
+                        <ul>
+                            <li><a href="#"><i class="fa fa-heart"></i> <span data-bind="text: $root.favorite().length"></span></a></li>
+                            <li><a href="/ShopCart"><i class="fa fa-shopping-bag"></i> <span data-bind="text: $root.cart().length"></span></a></li>
+                        </ul>
+                        <div class="header__cart__price">Tổng tiền: <span data-bind="text: $root.totalCart()"></span></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -87,8 +89,9 @@
     </div>
 </header>
 <!-- Header Section End -->
+
 <!-- Hero Section Begin -->
-<section class="hero">
+<section class="hero hero-normal">
     <div class="container">
         <div class="row">
             <div class="col-lg-3">
@@ -109,11 +112,9 @@
                             <div class="hero__search__categories">
                                 Danh mục
                                 <span class="arrow_carrot-down"></span>
-                                <div>
-                                </div>
                             </div>
-                            <input type="text" placeholder="Tên sản phẩm?">
-                            <button type="submit" class="site-btn">Tìm kiếm</button>
+                            <input data-bind="value: $root.keySearch" type="text" placeholder="Nhập tên sản phẩm">
+                            <button data-bind="click: $root.gotoSearch" class="site-btn">Tìm kiếm</button>
                         </form>
                     </div>
                     <div class="hero__search__phone">
@@ -126,20 +127,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="hero__item set-bg" data-setbg="https://belux.com.vn/wp-content/uploads/2022/04/2-1.jpg">
-                    <div class="hero__text">
-                        <span>OGANI SHOP</span>
-                        <h2>Đẳng cấp<br />Sang trọng</h2>
-                        <p>Đồ phong thủy mạ vàng</p>
-                        <a href="#" class="primary-btn">Xem ngay</a>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
 </section>
 <!-- Hero Section End -->
-
 
 <div id="detail-product">
     <!-- Breadcrumb Section Begin -->
@@ -149,6 +141,14 @@
                 <div class="col-lg-12 text-center">
                     <div class="breadcrumb__text">
                         <h2>Chi tiết sản phẩm</h2>
+                        <div class="breadcrumb__option">
+                            <a href="/Home">Trang chủ</a>
+                            <a href="/chi-tiet/1">Chi tiết</a>
+                            @*<span data-bind="text: $root.Url"></span>*@
+                            <span data-bind="with: $root.product">
+                                <span data-bind="text: name"></span>
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
