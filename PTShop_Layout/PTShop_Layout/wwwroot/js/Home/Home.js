@@ -77,11 +77,7 @@
                 query: `query {
                           category(first:  12 ) {
                             nodes {
-                              id
                               name
-                              parentId
-                              createAt
-                              updateAt
                             }
                           }
                         }
@@ -116,11 +112,12 @@
                               id
                               name
                               price
-                              isDelete
-                              status
                               productPrices {
                                 price
                                 productId
+                                product {
+                                    name
+                                }
                               }
                               productMedia {
                                 uri
@@ -141,6 +138,9 @@
                 self.productList([]);
                 if (res.data.totalCount != 0) {
                     $.each(res.data.product.nodes, function (ex, item) {
+                        var salePrice = ((item.price - item.productPrices[0].price) / item.price) * 100;
+                        var discount = String(salePrice.toFixed(0))+"%";
+                        item.discount = ko.observable(discount);
                         self.productList.push(self.convertToKoObject(item));
                     })
                 }
@@ -163,8 +163,6 @@
                           banner(first: 2) {
                             totalCount
                             nodes {
-                              id
-                              name
                               title
                               uri
                             }
@@ -198,7 +196,6 @@
                           contact {
                             totalCount
                             nodes {
-                              id
                               name
                               phone
                               email
@@ -284,8 +281,6 @@
                           id
                           name
                           price
-                          isDelete
-                          status
                           productPrices {
                             price
                             product {
@@ -336,11 +331,9 @@
                 query: `query{
                       product(where: {sale:{eq: true}}){
                         nodes {
-                          id
+                            id
                           name
                           price
-                          isDelete
-                          status
                           productPrices {
                             price
                              product {
@@ -386,11 +379,9 @@
                 query: `query{
                       product(where: {status:{eq: true}}, first: 3){
                         nodes {
-                          id
-                          name
+                            id
+                            name
                           price
-                          isDelete
-                          status
                           productPrices {
                             price
                             product {
@@ -425,7 +416,7 @@
         self.getContact();
         self.getProduct();
         self.getCategory();
-        self.getMedia();
+        //self.getMedia();
         self.productIsStatus();
         self.productIsSale();
         self.productIsDelete();
@@ -433,6 +424,7 @@
 
     self.cart = ko.observableArray();
     self.addToCart = function (item) {
+        console.log(item);
         if (item.Count == null) {
             item.Count = ko.observable(1);
         }
@@ -466,24 +458,24 @@
         }
         if (self.favorite().length != 0) {
             var isFind = false;
-            $.each(self.favorite(), function (idx, cart) {
-                if (item.id() == cart.id()) {
-                    var count = cart.Count();
-                    cart.Count(count += 1);
+            $.each(self.favorite(), function (idx, favorite) {
+                if (item.id() == favorite.id()) {
                     isFind = true;
-                    toastr.info('Đã thêm sản phẩm vào yêu thích!');
+                    self.showtoastError("Sản phẩm đã trong yêu thích!")
                 }
             });
             if (isFind == false) {
                 self.favorite.push(item);
                 toastr.info('Đã thêm mới sản phẩm vào yêu thích!');
+                simpleStorage.set("favorite", ko.toJS(self.favorite(), { TTL: 100000 }));
+
             }
         }
         else {
             self.favorite.push(item);
             toastr.info('Đã thêm mới sản phẩm vào yêu thích!');
+            simpleStorage.set("favorite", ko.toJS(self.favorite(), { TTL: 100000 }));
         }
-        simpleStorage.set("favorite", ko.toJS(self.favorite(), { TTL: 100000 }));
     }
 
     self.totalCart = function () {
@@ -529,75 +521,28 @@
         }
     }
 
-    let cookies = document.cookie;
-    //console.log(cookies);
-
-    //Get Prodcut
-    self.productList = ko.observableArray();
-    self.searchProduct = function () {
-        if ($("#searchKey").val() == "") {
-            self.showtoastState("Bạn chưa nhập nội dung tìm kiếm!")
-        } else {
-            var data = {
-                name: $("#searchKey").val(),
-                isDelete: false,
-                sale: false,
-                status: true
-            }
-            $.ajax({
-                method: "POST",
-                url: backendUrl + "/graphql",
-                contentType: "application/json",
-                data: JSON.stringify({
-                    query: `query ($data: SearchInput!) {
-                          searchProduct(first: 30, item: $data) {
-                            totalCount
-                            nodes {
-                              id
-                              name
-                              price
-                              isDelete
-                              status
-                              productPrices {
-                                price
-                              }
-                              productMedia {
-                                uri
-                                product {
-                                  name
-                                }
-                              }
-                              category {
-                                name
-                              }
-                            }
-                          }
-                        }
-                       `,
-                    variables: {
-                        data
-                    }
-                }),
-                success: function (res) {
-                    self.productList([]);
-                    if (res.data.totalCount != 0) {
-                        $.each(res.data.searchProduct.nodes, function (ex, item) {
-                            self.productList.push(self.convertToKoObject(item));
-                        })
-                    }
-                },
-                error: function (err) {
-                    console.log(err);
-                }
+    self.getFavorite = function () {
+        if (simpleStorage.hasKey("favorite")) {
+            var listFavorite = simpleStorage.get("favorite");
+            $.each(listFavorite, function (idx, item) {
+                self.favorite.push(self.convertToKoObject(item));
             });
         }
     }
 
+    let cookies = document.cookie;
+    //console.log(cookies);
+
+    self.keySearch = ko.observable();
+    self.gotoSearch = function () {
+        window.location.href = '/search?keysearch=' + self.keySearch();
+    }
 }
 
 $(function () {
     const viewModal = new ViewModal();
     viewModal.callApi(); 
     viewModal.getCart();
+    viewModal.getFavorite();
     ko.applyBindings(viewModal);
 })
